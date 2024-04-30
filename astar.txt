@@ -1,0 +1,87 @@
+class Node:
+    def __init__(self, val, g_cost=0, h_cost=0, parent=None):
+        self.val = val
+        self.g_cost = g_cost  # cost from start to current node
+        self.h_cost = h_cost  # heuristic cost from current node to goal
+        self.parent = parent  # parent node
+        self.neighbors = []   # list of neighboring nodes
+
+    def f_cost(self):
+        return self.g_cost + self.h_cost
+
+    def distance_to(self, neighbor):
+        # Assuming some distance calculation method between nodes
+        return 1  # For simplicity, assuming all distances as 1
+
+
+class AStar:
+    def __init__(self):
+        pass
+
+    def find_path(self, start, goal):
+        open_set = [start]
+        closed_set = []
+
+        while open_set:
+            current = open_set[0]
+            for node in open_set:
+                if node.f_cost() < current.f_cost() or (node.f_cost() == current.f_cost() and node.h_cost < current.h_cost):
+                    current = node
+
+            open_set.remove(current)
+            closed_set.append(current)
+
+            if current == goal:
+                path = []
+                while current is not None:
+                    path.append(current)
+                    current = current.parent
+                return path[::-1]
+
+            for neighbor in current.neighbors:
+                if neighbor in closed_set:
+                    continue
+
+                tentative_g_score = current.g_cost + current.distance_to(neighbor)
+
+                if neighbor not in open_set:
+                    open_set.append(neighbor)
+                elif tentative_g_score >= neighbor.g_cost:
+                    continue
+
+                neighbor.parent = current
+                neighbor.g_cost = tentative_g_score
+                neighbor.h_cost = neighbor.distance_to(goal)
+
+        return None
+
+# Define a test case
+def test():
+    # Creating nodes with values
+    start = Node("Start", g_cost=0, h_cost=5)  # start node
+    goal = Node("Goal")  # goal node
+    node1 = Node("Node 1", g_cost=2, h_cost=3)
+    node2 = Node("Node 2", g_cost=4, h_cost=2)
+    node3 = Node("Node 3", g_cost=5, h_cost=1)
+
+    # Setting up neighbors
+    start.neighbors = [node1, node2]
+    node1.neighbors = [start, node2, node3]
+    node2.neighbors = [start, node1, node3, goal]
+    node3.neighbors = [node1, node2, goal]
+    goal.neighbors = [node2, node3]
+
+    # Running A* algorithm
+    astar = AStar()
+    path = astar.find_path(start, goal)
+
+    # Printing the result
+    if path:
+        print("Path found:")
+        for node in path:
+            print(node.val)
+    else:
+        print("No path found.")
+
+# Run the test
+test()

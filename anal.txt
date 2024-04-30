@@ -1,0 +1,18 @@
+const fs = require('fs');
+
+function insecureFileHandling(filePath, data) {
+  fs.writeFileSync(filePath, data);
+
+  const content = fs.readFileSync(filePath, 'utf-8');
+
+  const userProvidedFileName = data.userFileName || 'default.txt';
+  const userFilePath = `./uploads/${userProvidedFileName}`;
+
+  fs.unlinkSync(userFilePath);
+}
+
+insecureFileHandling('example.txt', 'This is insecure file handling.');
+
+
+
+

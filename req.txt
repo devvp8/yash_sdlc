@@ -1,0 +1,10 @@
+google.generativeai
+langchain
+PyPDF2
+faiss-cpu
+tiktoken
+openai
+pickle
+
+
+        
